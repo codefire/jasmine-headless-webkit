@@ -4,7 +4,7 @@ require 'multi_json'
 
 module Jasmine
   class FilesList
-    attr_reader :files, :spec_files, :filtered_files, :spec_outside_scope
+    attr_reader :files, :spec_files, :filtered_files, :spec_outside_scope, :require_js, :require_js_main
 
     DEFAULT_FILES = [
       File.join(Jasmine::Core.path, "jasmine.js"),
@@ -115,9 +115,18 @@ module Jasmine
       @filtered_files = @files.dup
 
       data = @options[:config].dup
-      [ [ 'src_files', 'src_dir' ], [ 'stylesheets', 'src_dir' ], [ 'vendored_helpers' ], [ 'helpers', 'spec_dir' ], [ 'spec_files', 'spec_dir' ] ].each do |searches, root|
+      [ ['require_js', 'src_dir'], ['require_js_main', 'src_dir'], [ 'src_files', 'src_dir' ], [ 'stylesheets', 'src_dir' ], [ 'vendored_helpers' ], [ 'helpers', 'spec_dir' ], [ 'spec_files', 'spec_dir' ] ].each do |searches, root|
         if data[searches]
           case searches
+          when 'require_js', 'require_js_main'
+            path = data[searches]
+            path = File.join(data[root], data[searches]) if data[root]
+            path = expanded_dir(path)
+            if searches == 'require_js'
+              @require_js = path
+            else
+              @require_js_main = path
+            end
           when 'vendored_helpers'
             data[searches].each do |name|
               found_files = self.class.find_vendored_asset_path(name)

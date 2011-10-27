@@ -44,28 +44,41 @@
         };
       }
     </script>
-    <%= files.join("\n") %>
     <script type="text/javascript">
-      if (window.JHW) { HeadlessReporterResult.specLineNumbers = <%= MultiJson.encode(spec_lines) %>; }
-    </script>
-  </head>
-  <body>
-    <script type="text/javascript">
-      window._onload = window.onload
-
-      window.onload = function() {
+      var startJasmine = function() {
         if (window._onload) { window._onload() }
         if (window.JHW) {
+           HeadlessReporterResult.specLineNumbers = <%= MultiJson.encode(spec_lines) %>; 
           jasmine.getEnv().addReporter(new jasmine.HeadlessReporter(function() {
             window.onbeforeunload = null;
           }));
         } else {
           jasmine.getEnv().addReporter(new jasmine.HtmlReporter());
         }
-        
+        console.log("execute")
         jasmine.getEnv().execute();
       }
     </script>
+    <% if files_list.require_js %>
+      <script data-main="<%=files_list.require_js_main%>" src="<%=files_list.require_js%>"></script>
+    <% else %>
+      <%= files.join("\n") %>
+      <script type="text/javascript">
+        if (window.JHW) { HeadlessReporterResult.specLineNumbers = <%= MultiJson.encode(spec_lines) %>; }
+      </script>
+    <% end %>
+  </head>
+  <body>
+    <% unless files_list.require_js %>
+      <script type="text/javascript">
+          window._onload = window.onload
+
+          window.onload = function() {
+              if (window._onload) { window._onload() }
+              startJasmine();
+          }
+      </script>
+    <% end %>
   </body>
 </html>
 

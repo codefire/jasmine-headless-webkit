@@ -18,7 +18,7 @@ module Jasmine::Headless
       output.unshift([filtered_tests_filename , files_list.filtered_files_to_html ]) if files_list.filtered?
 
       output.each do |name, files|
-        File.open(name, 'w') { |fh| fh.print template_for(files, files_list.spec_file_line_numbers) }
+        File.open(name, 'w') { |fh| fh.print template_for(files, files_list, files_list.spec_file_line_numbers) }
       end
 
       output.collect(&:first)
@@ -33,7 +33,7 @@ module Jasmine::Headless
     end
 
     private
-    def template_for(files, spec_lines)
+    def template_for(files, files_list, spec_lines)
       ERB.new(Jasmine::Headless.root.join('skel/template.html.erb').read).result(binding)
     end
   end
