@@ -55,7 +55,6 @@
         } else {
           jasmine.getEnv().addReporter(new jasmine.HtmlReporter());
         }
-        console.log("execute")
         jasmine.getEnv().execute();
       }
     </script>
@@ -77,6 +76,7 @@
           <%= files_list.require_js_main %>
           
           require(['<%= files_list.files.select {|f| f =~ /.js$/}.join("','") %>'], function() {
+            jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter());
             startJasmine();
           });
         <% else %>
