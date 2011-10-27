@@ -76,7 +76,6 @@
           <%= files_list.require_js_main %>
           
           require(['<%= files_list.files.select {|f| f =~ /.js$/}.join("','") %>'], function() {
-            jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter());
             startJasmine();
           });
         <% else %>
