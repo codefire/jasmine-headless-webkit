@@ -60,7 +60,7 @@
       }
     </script>
     <% if files_list.require_js %>
-      <script data-main="<%=files_list.require_js_main%>" src="<%=files_list.require_js%>"></script>
+      <script type="text/javascript" src="<%= files_list.require_js %>"></script>
     <% else %>
       <%= files.join("\n") %>
       <script type="text/javascript">
@@ -69,16 +69,22 @@
     <% end %>
   </head>
   <body>
-    <% unless files_list.require_js %>
       <script type="text/javascript">
-          window._onload = window.onload
-
-          window.onload = function() {
-              if (window._onload) { window._onload() }
-              startJasmine();
-          }
-      </script>
-    <% end %>
+        window._onload = window.onload
+        window.onload = function() {
+        <% if files_list.require_js %>
+          
+          <%= files_list.require_js_main %>
+          
+          require(['<%= files_list.files.select {|f| f =~ /.js$/}.join("','") %>'], function() {
+            startJasmine();
+          });
+        <% else %>
+          if (window._onload) { window._onload() }
+          startJasmine();          
+      <% end %>
+      }
+    </script>
   </body>
 </html>
 

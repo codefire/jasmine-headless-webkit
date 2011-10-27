@@ -118,14 +118,17 @@ module Jasmine
       [ ['require_js', 'src_dir'], ['require_js_main', 'src_dir'], [ 'src_files', 'src_dir' ], [ 'stylesheets', 'src_dir' ], [ 'vendored_helpers' ], [ 'helpers', 'spec_dir' ], [ 'spec_files', 'spec_dir' ] ].each do |searches, root|
         if data[searches]
           case searches
-          when 'require_js', 'require_js_main'
+          when 'require_js_main'
+            path = data[searches]
+            @require_js_main = File.read(path)
+          when 'require_js'
             path = data[searches]
             path = File.join(data[root], data[searches]) if data[root]
             path = expanded_dir(path)
             if searches == 'require_js'
-              @require_js = path
+              @require_js = path.first
             else
-              @require_js_main = path
+              @require_js_main = path.first
             end
           when 'vendored_helpers'
             data[searches].each do |name|
